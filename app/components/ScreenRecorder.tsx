@@ -294,16 +294,7 @@ export function ScreenRecorder() {
   
   // Share video
   const handleShareVideo = useCallback(() => {
-    setShowShareDialog(true);
-  }, []);
-  
-  // Copy share link
-  const handleCopyShareLink = useCallback(() => {
-    // In a real app, we would upload the video and generate a link
-    // For now, we'll just simulate it
-    navigator.clipboard.writeText("https://screenclip.app/shared/example-recording");
-    toast.success("Share link copied to clipboard");
-    setShowShareDialog(false);
+    toast.info("Share feature coming soon!");
   }, []);
   
   // Cleanup on unmount
@@ -374,47 +365,10 @@ export function ScreenRecorder() {
                 <span className="text-sm font-medium">Webcam Position</span>
                 <span className="text-xs text-slate-500">Drag preview to reposition</span>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                {(["top-left", "top-right", "bottom-left", "bottom-right"] as const).map((position) => (
-                  <Button
-                    key={position}
-                    variant={webcamPosition === position ? "default" : "outline"}
-                    className="text-xs flex items-center justify-center h-9"
-                    onClick={() => setWebcamPosition(position)}
-                  >
-                    {position.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                  </Button>
-                ))}
-              </div>
             </div>
           )}
         </CardContent>
       </Card>
-      
-      {/* Share dialog */}
-      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Share your recording</DialogTitle>
-            <DialogDescription>
-              Copy the link below to share your recording
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex items-center space-x-2">
-            <div className="bg-zinc-100 dark:bg-zinc-800 p-2 rounded-md flex-1 truncate">
-              https://screenclip.app/shared/example-recording
-            </div>
-            <Button onClick={handleCopyShareLink} size="sm">
-              Copy
-            </Button>
-          </div>
-          <DialogFooter className="sm:justify-start">
-            <DialogDescription>
-              Note: This is just a demo. In a real app, the video would be uploaded to cloud storage.
-            </DialogDescription>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 } 
