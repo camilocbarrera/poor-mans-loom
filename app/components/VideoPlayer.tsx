@@ -5,22 +5,20 @@ import { useRef, useEffect } from "react";
 interface VideoPlayerProps {
   src: string | null;
   webcamEnabled: boolean;
-  webcamPosition: "top-left" | "top-right" | "bottom-left" | "bottom-right";
   autoPlay?: boolean;
 }
 
 export function VideoPlayer({ 
   src, 
   webcamEnabled,
-  webcamPosition = "bottom-right",
   autoPlay = true 
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   
   // Log webcam settings when they change
   useEffect(() => {
-    console.log(`Webcam settings - enabled: ${webcamEnabled}, position: ${webcamPosition}`);
-  }, [webcamEnabled, webcamPosition]);
+    console.log(`Webcam settings - enabled: ${webcamEnabled}`);
+  }, [webcamEnabled]);
 
   useEffect(() => {
     if (videoRef.current && src) {

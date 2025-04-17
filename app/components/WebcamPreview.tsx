@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, RefObject } from "react";
 import Webcam from "react-webcam";
 import { toast } from "sonner";
 import { Move } from "lucide-react";
@@ -8,9 +8,11 @@ import { Move } from "lucide-react";
 interface WebcamPreviewProps {
   enabled: boolean;
   onWebcamReady?: (stream: MediaStream) => void;
+  onPositionChange?: (relativePosition: { x: number; y: number }) => void;
+  screenContainerRef: RefObject<HTMLDivElement | null>;
 }
 
-export function WebcamPreview({ enabled, onWebcamReady }: WebcamPreviewProps) {
+export function WebcamPreview({ enabled, onWebcamReady, onPositionChange, screenContainerRef }: WebcamPreviewProps) {
   const webcamRef = useRef<Webcam>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasWebcamPermission, setHasWebcamPermission] = useState<boolean | null>(null);
@@ -82,10 +84,23 @@ export function WebcamPreview({ enabled, onWebcamReady }: WebcamPreviewProps) {
       const dx = e.clientX - dragStartRef.current.x;
       const dy = e.clientY - dragStartRef.current.y;
       
-      setPosition({
+      const newPos = {
         x: positionRef.current.x + dx,
         y: positionRef.current.y + dy
-      });
+      };
+      setPosition(newPos);
+
+      // Calculate position relative to screen container
+      const previewRect = containerRef.current?.getBoundingClientRect();
+      const screenRect = screenContainerRef.current?.getBoundingClientRect();
+      if (previewRect && screenRect) {
+        const relativeX = previewRect.left - screenRect.left;
+        const relativeY = previewRect.top - screenRect.top;
+        onPositionChange?.({ x: relativeX, y: relativeY });
+      } else {
+        // Fallback or error handling if refs aren't ready
+        onPositionChange?.({ x: 0, y: 0 });
+      }
     };
     
     const handleTouchMove = (e: TouchEvent) => {
@@ -94,10 +109,23 @@ export function WebcamPreview({ enabled, onWebcamReady }: WebcamPreviewProps) {
       const dx = e.touches[0].clientX - dragStartRef.current.x;
       const dy = e.touches[0].clientY - dragStartRef.current.y;
       
-      setPosition({
+      const newPos = {
         x: positionRef.current.x + dx,
         y: positionRef.current.y + dy
-      });
+      };
+      setPosition(newPos);
+
+      // Calculate position relative to screen container
+      const previewRect = containerRef.current?.getBoundingClientRect();
+      const screenRect = screenContainerRef.current?.getBoundingClientRect();
+      if (previewRect && screenRect) {
+        const relativeX = previewRect.left - screenRect.left;
+        const relativeY = previewRect.top - screenRect.top;
+        onPositionChange?.({ x: relativeX, y: relativeY });
+      } else {
+        // Fallback or error handling if refs aren't ready
+        onPositionChange?.({ x: 0, y: 0 });
+      }
     };
     
     const handleMouseUp = () => {
@@ -115,7 +143,7 @@ export function WebcamPreview({ enabled, onWebcamReady }: WebcamPreviewProps) {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, onPositionChange, screenContainerRef]);
   
   if (!enabled) return null;
   

@@ -26,8 +26,9 @@ export function ScreenRecorder() {
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
   const [webcamEnabled, setWebcamEnabled] = useState(false);
   const [microphoneEnabled, setMicrophoneEnabled] = useState(true);
-  const [webcamPosition, setWebcamPosition] = useState<"top-left" | "top-right" | "bottom-left" | "bottom-right">("bottom-right");
-  const [showShareDialog, setShowShareDialog] = useState(false);
+  const webcamRelativePosRef = useRef({ x: 0, y: 0 });
+  const screenContainerRef = useRef<HTMLDivElement>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   
   // Set records length for debugging
   useEffect(() => {
@@ -144,36 +145,28 @@ export function ScreenRecorder() {
           const webcamWidth = canvas.width * 0.25; // 25% of screen width
           const webcamHeight = (webcamVideo.videoHeight / webcamVideo.videoWidth) * webcamWidth;
           
-          // Position based on selected position
-          let x = 0;
-          let y = 0;
+          // Get latest relative position from ref
+          const { x: relativeX, y: relativeY } = webcamRelativePosRef.current;
           
-          switch(webcamPosition) {
-            case "top-left":
-              x = 16;
-              y = 16;
-              break;
-            case "top-right":
-              x = canvas.width - webcamWidth - 16;
-              y = 16;
-              break;
-            case "bottom-left":
-              x = 16;
-              y = canvas.height - webcamHeight - 16;
-              break;
-            case "bottom-right":
-            default:
-              x = canvas.width - webcamWidth - 16;
-              y = canvas.height - webcamHeight - 16;
-              break;
-          }
+          // Get screen container dimensions
+          const screenRect = screenContainerRef.current?.getBoundingClientRect();
+          const screenWidth = screenRect?.width || canvas.width; // Fallback to canvas width
+          const screenHeight = screenRect?.height || canvas.height; // Fallback to canvas height
+          
+          // Calculate scaling factors
+          const scaleX = canvas.width / screenWidth;
+          const scaleY = canvas.height / screenHeight;
+          
+          // Calculate final draw coordinates
+          const drawX = relativeX * scaleX;
+          const drawY = relativeY * scaleY;
           
           // Draw webcam with rounded corners
           ctx.save();
           ctx.beginPath();
-          ctx.roundRect(x, y, webcamWidth, webcamHeight, 8);
+          ctx.roundRect(drawX, drawY, webcamWidth, webcamHeight, 8);
           ctx.clip();
-          ctx.drawImage(webcamVideo, x, y, webcamWidth, webcamHeight);
+          ctx.drawImage(webcamVideo, drawX, drawY, webcamWidth, webcamHeight);
           
           // Add border
           ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
@@ -238,7 +231,7 @@ export function ScreenRecorder() {
       toast.error("Failed to start recording");
       cleanupStreams();
     }
-  }, [microphoneEnabled, webcamEnabled, webcamPosition, cleanupStreams]);
+  }, [microphoneEnabled, webcamEnabled, cleanupStreams]);
   
   // Stop recording
   const handleStopRecording = useCallback(() => {
@@ -307,6 +300,32 @@ export function ScreenRecorder() {
     };
   }, [cleanupStreams, recordedVideoUrl]);
   
+  // Handle position change from preview
+  const handlePositionChange = (relativePosition: { x: number; y: number }) => {
+    webcamRelativePosRef.current = relativePosition;
+  };
+
+  // Function to reset state and start recording
+  const confirmResetAndRecord = () => {
+    // Revoke previous URL if it exists
+    if (recordedVideoUrl) {
+      URL.revokeObjectURL(recordedVideoUrl);
+    }
+    // Reset state
+    setRecordedVideoUrl(null);
+    setRecordedChunks([]);
+    webcamRelativePosRef.current = { x: 0, y: 0 }; // Reset webcam position
+    // Assuming webcamEnabled and microphoneEnabled persist
+    
+    setShowResetConfirm(false);
+    handleStartRecording(); // Start the recording process
+  };
+
+  // Function called by 'Record Again' button
+  const handleStartNewRecording = () => {
+    setShowResetConfirm(true);
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <Card className="w-full">
@@ -315,12 +334,14 @@ export function ScreenRecorder() {
           <CardDescription>Simple screen recording - one click to capture</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="relative w-full rounded-lg overflow-hidden bg-zinc-950 aspect-video flex items-center justify-center border border-zinc-800">
+          <div 
+            ref={screenContainerRef}
+            className="relative w-full rounded-lg overflow-hidden bg-zinc-950 aspect-video flex items-center justify-center border border-zinc-800"
+          >
             {recordedVideoUrl ? (
               <VideoPlayer 
                 src={recordedVideoUrl} 
                 webcamEnabled={webcamEnabled}
-                webcamPosition={webcamPosition}
               />
             ) : (
               <div className="text-center p-8">
@@ -337,7 +358,12 @@ export function ScreenRecorder() {
             
             {/* Webcam preview */}
             {webcamEnabled && (
-              <WebcamPreview enabled={webcamEnabled} onWebcamReady={handleWebcamReady} />
+              <WebcamPreview 
+                enabled={webcamEnabled} 
+                onWebcamReady={handleWebcamReady} 
+                onPositionChange={handlePositionChange}
+                screenContainerRef={screenContainerRef}
+              />
             )}
           </div>
           
@@ -356,19 +382,26 @@ export function ScreenRecorder() {
             onToggleMicrophone={handleToggleMicrophone}
             onDownloadVideo={handleDownloadVideo}
             onShareVideo={handleShareVideo}
+            onStartNewRecording={handleStartNewRecording}
           />
-          
-          {/* Webcam position control - only show when webcam is enabled */}
-          {webcamEnabled && (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Webcam Position</span>
-                <span className="text-xs text-slate-500">Drag preview to reposition</span>
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={showResetConfirm} onOpenChange={setShowResetConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Start New Recording?</DialogTitle>
+            <DialogDescription>
+              Starting a new recording will discard the current one. Are you sure you want to continue?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowResetConfirm(false)}>Cancel</Button>
+            <Button onClick={confirmResetAndRecord}>Confirm & Record</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 

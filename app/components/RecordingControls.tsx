@@ -26,6 +26,7 @@ interface RecordingControlsProps {
   onToggleMicrophone: () => void;
   onDownloadVideo: () => void;
   onShareVideo: () => void;
+  onStartNewRecording?: () => void;
 }
 
 export function RecordingControls({
@@ -41,7 +42,8 @@ export function RecordingControls({
   onToggleWebcam,
   onToggleMicrophone,
   onDownloadVideo,
-  onShareVideo
+  onShareVideo,
+  onStartNewRecording
 }: RecordingControlsProps) {
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -99,11 +101,11 @@ export function RecordingControls({
           ) : (
             <Button
               variant="default"
-              onClick={onStartRecording}
+              onClick={recordedVideoUrl ? onStartNewRecording : onStartRecording}
               className="rounded-full"
             >
               <Circle className="h-4 w-4 mr-2 fill-current" />
-              Record
+              {recordedVideoUrl ? "Record Again" : "Record"}
             </Button>
           )}
         </div>
