@@ -146,7 +146,7 @@ export function VideoEditor({ videoBlob, videoDuration, onBack }: VideoEditorPro
   return (
     <div className="w-full space-y-4">
       {/* Video player */}
-      <div className="w-full rounded-lg overflow-hidden border border-neutral-800">
+      <div className="w-full rounded-lg overflow-hidden border border-neutral-800 noise-texture noise-texture-subtle">
         <VideoPlayer
           src={videoUrl}
           currentTime={currentTime}
@@ -157,7 +157,7 @@ export function VideoEditor({ videoBlob, videoDuration, onBack }: VideoEditorPro
       </div>
 
       {/* Timeline */}
-      <div className="bg-neutral-900/50 border border-neutral-800 rounded-lg p-4">
+      <div className="bg-neutral-900/50 border border-neutral-800 rounded-lg p-4 noise-texture noise-texture-subtle">
         <Timeline
           editorState={editorState}
           onTrimStart={handleTrimStart}

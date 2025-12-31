@@ -124,7 +124,7 @@ export function Timeline({
       {/* Timeline track */}
       <div
         ref={timelineRef}
-        className={`relative h-16 bg-neutral-900 rounded-lg overflow-hidden ${
+        className={`relative h-16 bg-neutral-900 rounded-lg overflow-hidden noise-texture noise-texture-subtle ${
           splitMode ? 'cursor-crosshair' : 'cursor-pointer'
         }`}
         onClick={handleTimelineClick}

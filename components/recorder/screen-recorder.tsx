@@ -265,7 +265,7 @@ export function ScreenRecorder({ onRecordingComplete }: ScreenRecorderProps) {
       {/* Preview area */}
       <div
         ref={containerRef}
-        className="relative w-full aspect-video bg-neutral-950 border border-neutral-800 overflow-hidden flex items-center justify-center"
+        className="relative w-full aspect-video bg-neutral-950 border border-neutral-800 overflow-hidden flex items-center justify-center noise-texture noise-texture-subtle"
       >
         {recordingState.isRecording ? (
           <div className="flex flex-col items-center gap-3">

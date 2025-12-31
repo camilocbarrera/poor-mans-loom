@@ -131,3 +131,32 @@
   z-index: 100;
   mix-blend-mode: overlay;
 }
+
+.noise-texture {
+  position: relative;
+}
+
+.noise-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/noise.png');
+  background-repeat: repeat;
+  opacity: 0.03;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+.noise-texture-subtle::before {
+  opacity: 0.015;
+}
+
+.noise-texture-strong::before {
+  opacity: 0.06;
+}
+
+.noise-texture-content {
+  position: relative;
+  z-index: 2;
+}

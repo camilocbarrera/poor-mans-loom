@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col relative">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-neutral-800/50 bg-[#0a0a0a]/80 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-neutral-800/50 bg-[#0a0a0a]/80 backdrop-blur-sm noise-texture noise-texture-subtle">
         <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Logo className="text-neutral-400" />
@@ -100,7 +100,7 @@ export default function Home() {
       </main>
       
       {/* Footer */}
-      <footer className="w-full border-t border-neutral-800/50">
+      <footer className="w-full border-t border-neutral-800/50 noise-texture noise-texture-subtle">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <span className="text-[10px] font-mono text-neutral-600">
             Record · Edit · Export — All in your browser
