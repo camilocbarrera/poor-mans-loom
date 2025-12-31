@@ -40,7 +40,7 @@ export default function Home() {
           <div className="flex items-center gap-2.5">
             <Logo className="text-neutral-400" />
             <span className="text-xs font-mono tracking-wide text-neutral-400">
-              ScreenClip
+              Poor Man's Loom
             </span>
           </div>
           

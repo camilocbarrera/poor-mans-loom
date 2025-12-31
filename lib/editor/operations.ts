@@ -218,6 +218,6 @@ export function downloadBlob(blob: Blob, filename: string): void {
 
 export function getExportFilename(format: ExportOptions['format']): string {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  return `screenclip-${timestamp}.${format}`;
+  return `poor-mans-loom-${timestamp}.${format}`;
 }
 

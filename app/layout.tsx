@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ScreenClip — Screen Recording",
+  title: "Poor Man's Loom — Screen Recording",
   description: "Minimal screen recording for everyone",
 };
 

@@ -1,4 +1,4 @@
-# ScreenClip
+# Poor Man's Loom
 
 > *Screen recorder from Temu*
 
@@ -9,7 +9,7 @@
 
 ## What is this?
 
-ScreenClip is a simple screen recording app built to avoid paying for expensive subscriptions. Record your screen easily without worrying about monthly fees or data privacy concerns.
+Poor Man's Loom is a simple screen recording app built to avoid paying for expensive subscriptions. Record your screen easily without worrying about monthly fees or data privacy concerns.
 
 ## Features
 
