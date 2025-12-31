@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Star } from 'lucide-react'
 
-const REPO_URL = 'https://github.com/camilocbarrera/screeclip'
-const API_URL = 'https://api.github.com/repos/camilocbarrera/screeclip'
+const REPO_URL = 'https://github.com/camilocbarrera/poor-mans-loom'
+const API_URL = 'https://api.github.com/repos/camilocbarrera/poor-mans-loom'
 
 export function GithubBadge() {
   const [stars, setStars] = useState<number | null>(null)
