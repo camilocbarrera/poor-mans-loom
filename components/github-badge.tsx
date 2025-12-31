@@ -12,6 +12,7 @@ export function GithubBadge() {
   useEffect(() => {
     const fetchStars = async () => {
       try {
+        
         const response = await fetch(API_URL)
         if (response.ok) {
           const data = await response.json()
